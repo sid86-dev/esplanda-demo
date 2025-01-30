@@ -1,8 +1,12 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const { data: session, status } = useSession();
+
+  const router = useRouter();
 
   if (status === "loading") return <>Loading...</>;
 
@@ -17,14 +21,25 @@ export default function Home() {
             I have built this with Next.js and Tailwind that includes signup,
             login, protected, and unprotected pages. On the backend, I have used
             NextAuth with JWT, Google, and Facebook login, along with Passport
-            for authentication. For the database, I have worked with SQLite,
+            for authentication. For the database, I have worked with Mongodb,
             based on your preference. The app is fully functional and deployed
             on Vercel.
           </p>
           <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
             {session && status === "authenticated" ? (
               <button
-                onClick={() => signOut()}
+                onClick={() => {
+                  const promise = signOut();
+
+                  toast.promise(promise, {
+                    loading: "Signing out...",
+                    success: () => {
+                      router.push("/");
+                      return <b>Logout successfull!</b>;
+                    },
+                    error: <b>Something went wrong</b>,
+                  });
+                }}
                 className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
               >
                 Logout

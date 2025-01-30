@@ -1,27 +1,31 @@
-import { signIn } from "next-auth/react";
+import { signIn, SignInResponse } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsloading] = useState(false);
 
   const router = useRouter();
 
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await signIn("credentials", {
-        redirect: false,
-        // callbackUrl: "/",
-        email: formData.email,
-        password: formData.password,
-      });
-      // Redirect to the home page after successful sign in
+    setIsloading(true);
+    const data: SignInResponse | undefined = await signIn("credentials", {
+      redirect: false,
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (data?.status === 200) {
+      toast.success("Logged in successfully!");
       router.push("/");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to sign in. Please try again.");
+      setIsloading(false);
+    } else {
+      toast.error(data?.error);
+      setIsloading(false);
     }
   };
   return (
@@ -97,7 +101,8 @@ export default function Login() {
             </div>
             <button
               type="submit"
-              className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              disabled={isLoading}
+              className="w-full disabled:bg-gray-300 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Sign in
             </button>

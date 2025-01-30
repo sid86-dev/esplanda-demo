@@ -1,19 +1,34 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function Signup() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const router = useRouter();
+  const [isLoading, setIsloading] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("/api/signup", {
+    setIsloading(true);
+    const promise = fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    router.push("/login");
+
+    toast.promise(promise, {
+      loading: "submitting your request...",
+      success: () => {
+        router.push("/login");
+        setIsloading(false);
+        return <b>Account created successfully!</b>;
+      },
+      error: () => {
+        setIsloading(false);
+        return <b>Something went wrong</b>;
+      },
+    });
   };
 
   return (
@@ -65,7 +80,8 @@ export default function Signup() {
 
             <button
               type="submit"
-              className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              disabled={isLoading}
+              className="w-full disabled:bg-gray-300 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Create
             </button>
