@@ -5,29 +5,34 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Login() {
+  // State for storing user input
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsloading] = useState(false);
 
   const router = useRouter();
 
+  // Handle sign-in logic
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsloading(true);
+
+    // Attempt to sign in with credentials
     const data: SignInResponse | undefined = await signIn("credentials", {
       redirect: false,
       email: formData.email,
       password: formData.password,
     });
 
+    // Handle response from authentication
     if (data?.status === 200) {
       toast.success("Logged in successfully!");
-      router.push("/");
-      setIsloading(false);
+      router.push("/"); // Redirect to home page
     } else {
-      toast.error(data?.error);
-      setIsloading(false);
+      toast.error(data?.error || "Login failed");
     }
+    setIsloading(false);
   };
+
   return (
     <section className="dark:bg-gray-900 flex justify-center pt-10">
       <div className="w-full bg-white rounded-lg border dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -35,6 +40,8 @@ export default function Login() {
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Sign in to your account
           </h1>
+
+          {/* Social login buttons */}
           <div className="w-full flex items-center justify-between">
             <button
               className="px-3 py-2 bg-blue-600 text-sm rounded-md text-white"
@@ -49,9 +56,13 @@ export default function Login() {
               Login with Google
             </button>
           </div>
+
+          {/* Divider */}
           <div className="text-center">
             <span className="text-gray-400">OR</span>
           </div>
+
+          {/* Login form */}
           <form className="space-y-4 md:space-y-6" onSubmit={handleSignin}>
             <div>
               <label
@@ -64,9 +75,7 @@ export default function Login() {
                 type="email"
                 name="email"
                 id="email"
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
                 required
@@ -84,18 +93,13 @@ export default function Login() {
                 name="password"
                 id="password"
                 placeholder="••••••••"
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required
               />
             </div>
             <div className="flex items-center justify-end">
-              <a
-                href="#"
-                className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-              >
+              <a href="#" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
                 Forgot password?
               </a>
             </div>
@@ -108,10 +112,7 @@ export default function Login() {
             </button>
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
               Don’t have an account yet?{" "}
-              <Link
-                href="/signup"
-                className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-              >
+              <Link href="/signup" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
                 Sign up
               </Link>
             </p>

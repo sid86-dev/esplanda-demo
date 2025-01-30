@@ -4,21 +4,30 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 export default function Signup() {
+  // State to store form data
   const [formData, setFormData] = useState({ email: "", password: "" });
+  
+  // Router instance for navigation
   const router = useRouter();
+  
+  // Loading state for the signup process
   const [isLoading, setIsloading] = useState(false);
 
+  // Handle signup form submission
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsloading(true);
+
+    // Send signup request to API
     const promise = fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
 
+    // Show toast notifications for different outcomes
     toast.promise(promise, {
-      loading: "submitting your request...",
+      loading: "Submitting your request...",
       success: () => {
         router.push("/login");
         setIsloading(false);
@@ -39,6 +48,7 @@ export default function Signup() {
             Create your new account
           </h1>
           <form className="space-y-4 md:space-y-6" onSubmit={handleSignup}>
+            {/* Email Input Field */}
             <div>
               <label
                 htmlFor="email"
@@ -58,6 +68,8 @@ export default function Signup() {
                 required
               />
             </div>
+            
+            {/* Password Input Field */}
             <div>
               <label
                 htmlFor="password"
@@ -78,6 +90,7 @@ export default function Signup() {
               />
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -85,8 +98,10 @@ export default function Signup() {
             >
               Create
             </button>
+            
+            {/* Link to Login Page */}
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-              Already have an account?{" "}
+              Already have an account? {" "}
               <Link
                 href="/login"
                 className="font-medium text-blue-600 hover:underline dark:text-blue-500"
