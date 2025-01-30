@@ -1,6 +1,17 @@
-import "@/styles/globals.css";
-import type { AppProps } from "next/app";
+import { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
+import "../styles/globals.css";
+import Tabs from "@/components/Tabs";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <SessionProvider session={pageProps.session}>
+      <div className="flex flex-col">
+        <Tabs />
+        <Component {...pageProps} />
+      </div>
+    </SessionProvider>
+  );
 }
+
+export default MyApp;
